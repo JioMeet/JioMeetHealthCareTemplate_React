@@ -5,8 +5,8 @@
 1. [Introduction](#introduction)
 2. [Features](#features)
 3. [Prerequisites](#prerequisites)
-- [Install package](#install-the-package)
-- [Android](#for-android)
+   - [Install package](#install-the-package)
+   - [Android](#for-android)
 4. [Setup](#setup)
 5. [Usage](#usage-launch-core-template-screen)
 6. [Example](#example)
@@ -98,6 +98,20 @@ To set up Kotlin in your flutter project, follow these steps:
     tools:replace="android:name">
 ```
 
+#### Adding `credentials.properties` File in the `android` Folder
+
+To securely add your GitHub credentials, follow these steps to create a `credentials.properties` file in your project's `android` folder and update the build configuration accordingly.
+
+##### Create `credentials.properties` File
+
+1. Navigate to the `android` folder in the root of your React Native project.
+2. Create a new file named `credentials.properties`.
+3. Open the `credentials.properties` file and add your GitHub credentials:
+
+   ```properties
+   github_username=your-github-username
+   github_password=your-github-token-or-password
+
 ## Setup
 
 ##### Register on JioMeet Platform:
@@ -141,11 +155,16 @@ import { DeviceEventEmitter } from 'react-native';
 
 useEffect(() => {
   DeviceEventEmitter.addListener('call_ended', (message) => {
+    setCallStatus(message);
     // Handle the message as needed
   });
-  return ()=>{
-    DeviceEventEmitter.removeAllListeners('call_ended')
-  }
+  DeviceEventEmitter.addListener('participant_icon_clicked', (message) => {
+    //Handle participant icon clicked
+  });
+  return () => {
+    DeviceEventEmitter.removeAllListeners('call_ended');
+    DeviceEventEmitter.removeAllListeners('participant_icon_clicked');
+  };
 }, []);
 ```
 The above callback will be triggered when the Call is ended, you can handle this callback as per your need, the default message that is received is "Call Ended"
@@ -164,9 +183,9 @@ import {
   Text,
   DeviceEventEmitter,
 } from 'react-native';
-import {launchMeetingHealthCareTemplateUI} from '@jiomeet/healthcare-template-react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useEffect, useState } from 'react';
+import { launchMeetingHealthCareTemplateUI } from '@jiomeet/healthcare-template-react-native';
 
 export default function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -184,16 +203,18 @@ export default function App() {
     },
   });
 
-
   useEffect(() => {
     DeviceEventEmitter.addListener('call_ended', (message) => {
-      console.log('Received message from Kotlin:', message);
       setCallStatus(message);
       // Handle the message as needed
     });
-    return ()=>{
-      DeviceEventEmitter.removeAllListeners('call_ended')
-    }
+    DeviceEventEmitter.addListener('participant_icon_clicked', (message) => {
+      //Handle participant icon clicked
+    });
+    return () => {
+      DeviceEventEmitter.removeAllListeners('call_ended');
+      DeviceEventEmitter.removeAllListeners('participant_icon_clicked');
+    };
   }, []);
   return (
     <SafeAreaView style={backgroundStyle.container}>
@@ -203,24 +224,27 @@ export default function App() {
       />
       <TextInput
         value={meetingId}
-        onChange={()=>setCallStatus('Not Started')}
+        onChange={() => setCallStatus('Not Started')}
         style={styles.textInput}
         placeholder={'Meeting ID'}
+        placeholderTextColor={'black'}
         onChangeText={setMeetingId}
         inputMode={'numeric'}
       />
       <TextInput
         value={password}
-        onChange={()=>setCallStatus('Not Started')}
+        onChange={() => setCallStatus('Not Started')}
         style={styles.textInput}
         placeholder={'Password'}
+        placeholderTextColor={'black'}
         onChangeText={setPassword}
       />
       <TextInput
         value={name}
-        onChange={()=>setCallStatus('Not Started')}
+        onChange={() => setCallStatus('Not Started')}
         style={styles.textInput}
         placeholder={'Name Visible'}
+        placeholderTextColor={'black'}
         onChangeText={setName}
       />
       <Button
@@ -232,11 +256,10 @@ export default function App() {
           launchMeetingHealthCareTemplateUI(meetingId, password, name);
         }}
       />
-      <Text style={{margin: 16}}>Call status: {callStatus}</Text>
+      <Text style={{ margin: 16 }}>Call status: {callStatus}</Text>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -255,8 +278,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCE6E7',
     borderRadius: 8,
     alignSelf: 'stretch',
+    color: 'black',
   },
 });
+
 
 ```
 
