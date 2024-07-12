@@ -7,6 +7,8 @@
 3. [Prerequisites](#prerequisites)
    - [Install package](#install-the-package)
    - [Android](#for-android)
+   - [iOS](#ios-project-settings)
+
 4. [Setup](#setup)
 5. [Usage](#usage-launch-core-template-screen)
 6. [Example](#example)
@@ -112,6 +114,34 @@ To securely add your GitHub credentials, follow these steps to create a `credent
    github_username=your-github-username
    github_password=your-github-token-or-password
 
+#### iOS Project Settings
+
+You need to make below changes to iOS Project. Go to iOS Folder. Open `YOUR_PROJECT_NAME.xcworkspace` and make below changes.
+
+##### Info.plist Changes
+
+Please add below permissions keys to your `Info.plist` file with proper description.
+
+```swift
+<key>NSCameraUsageDescription</key>
+<string>Allow access to camera for meetings</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Allow access to mic for meetings</string>
+```
+
+##### Enable Background Mode
+
+Please enable `Background Modes` in your project `Signing & Capibilities` tab. After enabling please check box with option `Audio, Airplay, and Pictures in Pictures`. If you don't enables this setting, your mic will be muted when your app goes to background.
+
+##### Enable Audio Video Permissons
+
+Before joining the meeting please check audio video permissons are enabled or not. If not please throw an error to enable both audio and video permissons
+
+##### Orientation
+
+Currently SDK support portarait orientation. If your app supports multiple orientation, please lock down orientation when you show the SDK View.
+
+
 ## Setup
 
 ##### Register on JioMeet Platform:
@@ -129,11 +159,11 @@ Use the [create meeting api](https://dev.jiomeet.com/docs/JioMeet%20Platform%20S
 ### Usage: Launch Core Template Screen
 
 ```tsx
-import { launchMeetingHealthCareTemplateUI } from '@jiomeet/healthcare-template-react-native';
+import HealthCareManager from '@jiomeet/healthcare-template-react-native';
 
 // ...
 
-launchMeetingHealthCareTemplateUI(meetingId, meetingPin, displayName);
+HealthCareManager.launchMeetingHealthCareTemplateUI(meetingId, password, name);
 ```
 
 To join a meeting, enter meeting details in the function and directly call the function as mentioned above
@@ -154,16 +184,75 @@ import { DeviceEventEmitter } from 'react-native';
 // ...
 
 useEffect(() => {
-  DeviceEventEmitter.addListener('call_ended', (message) => {
-    setCallStatus(message);
-    // Handle the message as needed
-  });
-  DeviceEventEmitter.addListener('participant_icon_clicked', (message) => {
-    //Handle participant icon clicked
-  });
+  
+  HealthCareManager.addListener('participant_icon_clicked', (data) => {
+      console.log('Received event participant_icon_clicked');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('call_ended', (data) => {
+      console.log('Received event call_ended');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('call_joined', (data) => {
+      console.log('Received event call_joined');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('local_mic_updated', (data) => {
+      console.log('Received event local_mic_updated');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('local_video_updated', (data) => {
+      console.log('Received event local_video_updated');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_joined', (data) => {
+      console.log('Received event remote_user_joined');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_left', (data) => {
+      console.log('Received event remote_user_left');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_mic_updated', (data) => {
+      console.log('Received event remote_user_mic_updated');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_video_updated', (data) => {
+      console.log('Received event remote_user_video_updated');
+      console.log('Message Data:', data)
+    });
+
+    HealthCareManager.addListener('failed_to_join_call', (data) => {
+      console.log('Received event failed_to_join_call');
+      console.log('Message Data:', data)
+    });
+    
+    HealthCareManager.addListener('error_occurred', (data) => {
+      console.log('Received event error_occurred');
+      console.log('Message Data:', data)
+    });
+
+
   return () => {
-    DeviceEventEmitter.removeAllListeners('call_ended');
-    DeviceEventEmitter.removeAllListeners('participant_icon_clicked');
+    HealthCareManager.removeAllListeners('participant_icon_clicked')
+      HealthCareManager.removeAllListeners('call_ended')
+      HealthCareManager.removeAllListeners('call_joined')
+      HealthCareManager.removeAllListeners('local_mic_updated')
+      HealthCareManager.removeAllListeners('local_video_updated')
+      HealthCareManager.removeAllListeners('remote_user_joined')
+      HealthCareManager.removeAllListeners('remote_user_left')
+      HealthCareManager.removeAllListeners('remote_user_mic_updated')
+      HealthCareManager.removeAllListeners('remote_user_video_updated')
+      HealthCareManager.removeAllListeners('failed_to_join_call')
+      HealthCareManager.removeAllListeners('error_occurred')
   };
 }, []);
 ```
@@ -185,7 +274,7 @@ import {
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useEffect, useState } from 'react';
-import { launchMeetingHealthCareTemplateUI } from '@jiomeet/healthcare-template-react-native';
+import HealthCareManager from '@jiomeet/healthcare-template-react-native';
 
 export default function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -204,16 +293,74 @@ export default function App() {
   });
 
   useEffect(() => {
-    DeviceEventEmitter.addListener('call_ended', (message) => {
-      setCallStatus(message);
-      // Handle the message as needed
+
+    HealthCareManager.addListener('participant_icon_clicked', (data) => {
+      console.log('Received event participant_icon_clicked');
+      console.log('Received message from Kotlin:', data)
     });
-    DeviceEventEmitter.addListener('participant_icon_clicked', (message) => {
-      //Handle participant icon clicked
+
+    HealthCareManager.addListener('call_ended', (data) => {
+      console.log('Received event call_ended');
+      console.log('Received message from Kotlin:', data)
     });
+
+    HealthCareManager.addListener('call_joined', (data) => {
+      console.log('Received event call_joined');
+      console.log('Received message from Kotlin:', data)
+    });
+
+    HealthCareManager.addListener('local_mic_updated', (data) => {
+      console.log('Received event local_mic_updated');
+      console.log('Received message from Kotlin:', data)
+    });
+
+    HealthCareManager.addListener('local_video_updated', (data) => {
+      console.log('Received event local_video_updated');
+      console.log('Received message from Kotlin:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_joined', (data) => {
+      console.log('Received event remote_user_joined');
+      console.log('Received message from Kotlin:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_left', (data) => {
+      console.log('Received event remote_user_left');
+      console.log('Received message from Kotlin:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_mic_updated', (data) => {
+      console.log('Received event remote_user_mic_updated');
+      console.log('Received message from Kotlin:', data)
+    });
+
+    HealthCareManager.addListener('remote_user_video_updated', (data) => {
+      console.log('Received event remote_user_video_updated');
+      console.log('Received message from Kotlin:', data)
+    });
+
+    HealthCareManager.addListener('failed_to_join_call', (data) => {
+      console.log('Received event failed_to_join_call');
+      console.log('Received message from Kotlin:', data)
+    });
+    
+    HealthCareManager.addListener('error_occurred', (data) => {
+      console.log('Received event error_occurred');
+      console.log('Received message from Kotlin:', data)
+    });
+
     return () => {
-      DeviceEventEmitter.removeAllListeners('call_ended');
-      DeviceEventEmitter.removeAllListeners('participant_icon_clicked');
+      HealthCareManager.removeAllListeners('participant_icon_clicked')
+      HealthCareManager.removeAllListeners('call_ended')
+      HealthCareManager.removeAllListeners('call_joined')
+      HealthCareManager.removeAllListeners('local_mic_updated')
+      HealthCareManager.removeAllListeners('local_video_updated')
+      HealthCareManager.removeAllListeners('remote_user_joined')
+      HealthCareManager.removeAllListeners('remote_user_left')
+      HealthCareManager.removeAllListeners('remote_user_mic_updated')
+      HealthCareManager.removeAllListeners('remote_user_video_updated')
+      HealthCareManager.removeAllListeners('failed_to_join_call')
+      HealthCareManager.removeAllListeners('error_occurred')
     };
   }, []);
   return (
@@ -253,7 +400,7 @@ export default function App() {
         }
         title={'Join Call'}
         onPress={() => {
-          launchMeetingHealthCareTemplateUI(meetingId, password, name);
+          HealthCareManager.launchMeetingHealthCareTemplateUI(meetingId, password, name);
         }}
       />
       <Text style={{ margin: 16 }}>Call status: {callStatus}</Text>

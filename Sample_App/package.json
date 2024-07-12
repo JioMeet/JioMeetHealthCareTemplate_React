@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@jiomeet/healthcare-template-react-native": "1.1.0",
+    "@jiomeet/healthcare-template-react-native": "^1.2.0",
     "react": "18.2.0",
     "react-native": "0.74.2"
   },
