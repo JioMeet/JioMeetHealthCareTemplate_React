@@ -10,9 +10,10 @@ import {
   Text,
   DeviceEventEmitter,
 } from 'react-native';
+
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useEffect, useState } from 'react';
-import { launchMeetingHealthCareTemplateUI } from '@jiomeet/healthcare-template-react-native';
+import HealthCareManager from '@jiomeet/healthcare-template-react-native';
 
 export default function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -81,7 +82,8 @@ export default function App() {
             }
             title={'Join Call'}
             onPress={() => {
-              launchMeetingHealthCareTemplateUI(meetingId, password, name);
+              console.log(`${meetingId}`)
+              HealthCareManager.launchMeetingHealthCareTemplateUI(meetingId, password, name)
             }}
         />
         <Text style={{ margin: 16 }}>Call status: {callStatus}</Text>
