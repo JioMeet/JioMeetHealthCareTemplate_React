@@ -16,9 +16,9 @@ import HealthCareManager from '@jiomeet/healthcare-template-react-native';
 
 export default function App() {
   const isDarkMode = useColorScheme() === 'dark';
-  const [meetingId, setMeetingId] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [meetingId, setMeetingId] = useState('7913549377');
+  const [password, setPassword] = useState('21wMx');
+  const [name, setName] = useState('Yash');
   const [callStatus, setCallStatus] = useState('Not Started');
 
   const backgroundStyle = StyleSheet.create({
@@ -82,7 +82,7 @@ export default function App() {
       console.log('Received event failed_to_join_call');
       console.log('Received message from Kotlin:', data)
     });
-    
+
     HealthCareManager.addListener('error_occurred', (data) => {
       console.log('Received event error_occurred');
       console.log('Received message from Kotlin:', data)
