@@ -16,9 +16,9 @@ import HealthCareManager from '@jiomeet/healthcare-template-react-native';
 
 export default function App() {
   const isDarkMode = useColorScheme() === 'dark';
-  const [meetingId, setMeetingId] = useState('7913549377');
-  const [password, setPassword] = useState('21wMx');
-  const [name, setName] = useState('Yash');
+  const [meetingId, setMeetingId] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [callStatus, setCallStatus] = useState('Not Started');
 
   const backgroundStyle = StyleSheet.create({
